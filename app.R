@@ -144,19 +144,17 @@ server <- shinyServer(function(input, output, session) {
   
   # Countdown timer 
   output$countDown <- renderUI({
-    
     eventTime <- newTime()
     # Reactive timer to update Sys.time() each second
     invalidateLater(1000, session)
     dt <- difftime(eventTime, Sys.time(), units = "secs")
     format(.POSIXct(dt, tz = "GMT"), "%M:%S")
-    
   })  
 
   # Fetch dataset
   getData <- reactive({
     input$refresh # Refresh if button clicked
-
+    
     # Get interval 
     interval <- as.numeric(input$interval)
     # Invalidate this reactive after the interval has passed, so that data is
@@ -177,7 +175,6 @@ server <- shinyServer(function(input, output, session) {
   # Show current position for selected mode of transportation
   observe({
     lines <- c(input$tramlines, input$buslines)
- 
     if (!is.null(lines) & (!is.null(getData()))  ) {
       
       dataset <- getData()
@@ -204,11 +201,9 @@ server <- shinyServer(function(input, output, session) {
                    #popup = ~paste(type,"no.",name ), 
                    icon = transportIcons, layerId = ~ k) %>%
         addControl(html = customLegend, position = "bottomright")
-
     } else {
       leafletProxy("transportmap") %>% clearMarkers() %>% clearPopups() %>% clearControls()
     }
-    
   })
   
   # Define logic for Zoom button
@@ -239,18 +234,15 @@ server <- shinyServer(function(input, output, session) {
     if (is.null(event))
       return()
     
-    lines <- c(input$tramlines, input$buslines)
-    
-    if (!is.null(lines)) {
-    isolate({
-      
+    lines <- c(input$tramlines, input$buslines)   
+   if (!is.null(lines)) {
+    isolate({     
       showPopup(event$id, event$lat, event$lng)
     })
     }
   })
   
 })
-
 
 # Run the application 
 shinyApp(ui = ui, server = server)
