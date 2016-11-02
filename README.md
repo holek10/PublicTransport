@@ -36,6 +36,8 @@ fromJSON(dat)
 ```
 
 ## How to run the app
+> Online version is now up and running here: https://holek10.shinyapps.io/PublicTransport/  
+
 To run the app locally you should install required packages: **shiny**,  **shinydashboard**,  **leaflet**, **RCurl**, **jsonlite** and **XML** in R, for example: 
 ```R
 if (!require('shiny')) install.packages("shiny")
