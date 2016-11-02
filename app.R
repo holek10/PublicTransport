@@ -13,9 +13,9 @@ trackingURL <- "http://pasazer.mpk.wroc.pl/position.php"
 ## Functions to Get Source Data ----
 
 # Fetch bus and tram lines 
-getLines <- function(url) {
+getLines <- function(web_url) {
   # Download page using RCurl
-  webpage <- getURL(url)
+  webpage <- getURL(web_url)
   # Process escape characters
   webpage <- readLines(tc <- textConnection(webpage)); close(tc)
   # Parse the html tree, ignoring errors on the page
@@ -32,14 +32,14 @@ getLines <- function(url) {
 }
 
 # Get tracking info for line(s)
-getTrackingData <- function(url, lineNumbers) {
+getTrackingData <- function(web_url, lineNumbers) {
   # Initialize CURL handle
   curl <- getCurlHandle()
   # Select bus or tram line(s) in a form of "busList[bus][]" = "17"
   pars <- tryCatch(as.list(setNames(lineNumbers, rep("busList[bus][]",length(lineNumbers)))), warning = function(e) NULL, error = function(e) NULL)
   # send POST request to get current location and coressponding data 
   # convert JSON output into date.frame and return NULL if any error occurs
-  output <- tryCatch(fromJSON(postForm(url, .params = pars, curl = curl)) , warning = function(e) NULL, error = function(e) NULL)
+  output <- tryCatch(fromJSON(postForm(web_url, .params = pars, curl = curl)) , warning = function(e) NULL, error = function(e) NULL)
   if (is.list(output) & is.null(nrow(output))) output <- NULL
   # Change variable names 
   if(!is.null(output) ) names(output)[c(3,4)] <- c("lng", "lat")
@@ -80,7 +80,8 @@ body <- dashboardBody(
              class = "text-muted",
              paste("Note: You can select multiple lines at a time.")
            ),
-           actionButton("zoomButton", "Zoom to fit")
+           actionButton("zoomButton", "Zoom to fit"),
+           actionButton("resetButton", "Clear the map", style="float: right;")
        ),
        box(width = NULL, status = "warning", 
            selectInput("interval", "Refresh interval",
@@ -93,7 +94,6 @@ body <- dashboardBody(
                        ),
                        selected = "10"
            ),
-          
            actionButton("refresh", "Refresh now"),
            p(class = "text-muted",
              br(),
@@ -128,7 +128,7 @@ server <- shinyServer(function(input, output, session) {
   # Not used (for testing only)
   #session$onSessionEnded(stopApp)
   #output$temp <- renderPrint({ c(input$tramlines)  })
-
+  
   # Current time + offest based on user choice interval 
   newTime <- reactive({
     interval <- as.numeric(input$interval)
@@ -150,7 +150,7 @@ server <- shinyServer(function(input, output, session) {
   # Fetch dataset
   getData <- reactive({
     input$refresh # Refresh if button clicked
-    
+
     # Get interval 
     interval <- as.numeric(input$interval)
     # Invalidate this reactive after the interval has passed, so that data is
@@ -172,7 +172,6 @@ server <- shinyServer(function(input, output, session) {
   observe({
     lines <- c(input$tramlines, input$buslines)
     if (!is.null(lines) & (!is.null(getData()))  ) {
-      
       dataset <- getData()
       # Define custom icons
       transportIcons <- icons(
@@ -203,7 +202,7 @@ server <- shinyServer(function(input, output, session) {
   })
   
   # Define logic for Zoom button
-  observeEvent(  input$zoomButton, {
+  observeEvent( input$zoomButton, {
     lines <- isolate(c(input$tramlines, input$buslines))
     if (!is.null(lines) & (!is.null(getData()))  ) {
       dataset <- getData()
@@ -212,6 +211,16 @@ server <- shinyServer(function(input, output, session) {
      }
   })
 
+  # Define logic for Reset button
+  observeEvent( input$reset, {
+    # Recreate content of inputs
+    updateSelectInput(session, inputId = "tramlines", label = "Tram line", choices = c("Choose one" = "", getLines(webpageURL)$tramlines))
+    updateSelectInput(session, inputId = "buslines", label = "Bus line", choices = list("Choose one" = "", "REGULAR" = getLines(webpageURL)$buslines, "OTHER" = getLines(webpageURL)$other))
+    # Clear the map
+    leafletProxy("transportmap") %>% clearMarkers() %>% clearPopups() %>% clearControls()
+  })
+  
+  
   # Show custom popup on mouse over
   showPopup <- function(k, lat, lng) {
     dataset <- getData()
@@ -227,17 +236,15 @@ server <- shinyServer(function(input, output, session) {
   observe({
     leafletProxy("transportmap") %>% clearPopups()
     event <- input$transportmap_marker_mouseover
-    if (is.null(event))
-      return()
-    
-    lines <- c(input$tramlines, input$buslines)   
-   if (!is.null(lines)) {
-    isolate({     
+    if (is.null(event)) return()
+    lines <- c(input$tramlines, input$buslines)
+    if (!is.null(lines)) {
+    isolate({
       showPopup(event$id, event$lat, event$lng)
     })
     }
   })
-  
+
 })
 
 # Run the application 
