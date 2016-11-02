@@ -21,9 +21,9 @@ which gives the following array with coordinates (y = longitude , x = latitude) 
 ```
 {name: "104", type:"bus", y:16.948914, x:51.15738, k:"8667099"}
 ```
-In R we can use `Rcurl` and `jsonlite` packages to get the same output 
+In R we can use `RCurl` and `jsonlite` packages to get the same output 
 ```R
-library(Rcurl)
+library(RCurl)
 library(jsonlite)
 busline <- 104
 names(busline) <- "busList[bus][]"
