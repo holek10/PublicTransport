@@ -1,4 +1,3 @@
-
 # Load Required Packages ----
 library(shiny)
 library(shinydashboard)
@@ -10,7 +9,6 @@ library(XML)
 # Data sources:
 webpageURL <- "http://mpk.wroc.pl/jak-jezdzimy/mapa-pozycji-pojazdow"
 trackingURL <- "http://pasazer.mpk.wroc.pl/position.php"
-
 
 ## Functions to Get Source Data ----
 
@@ -123,8 +121,6 @@ ui <- dashboardPage(
         dashboardSidebar(disable = TRUE, width = 400),
         body
 )
-
-
 
 ## Define Server Logic  ----
 server <- shinyServer(function(input, output, session) {
