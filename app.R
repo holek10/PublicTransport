@@ -12,7 +12,7 @@ trackingURL <- "http://pasazer.mpk.wroc.pl/position.php"
 
 ## Functions to Get Source Data ----
 
-# Fetch bus and tram lines 
+# Scrape website for up-to-date bus and tram lines 
 getLines <- function(web_url) {
   # Download page using RCurl
   webpage <- getURL(web_url)
