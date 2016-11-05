@@ -212,7 +212,7 @@ server <- shinyServer(function(input, output, session) {
   })
 
   # Define logic for Reset button
-  observeEvent( input$reset, {
+  observeEvent( input$resetButton, {
     # Recreate content of inputs
     updateSelectInput(session, inputId = "tramlines", label = "Tram line", choices = c("Choose one" = "", getLines(webpageURL)$tramlines))
     updateSelectInput(session, inputId = "buslines", label = "Bus line", choices = list("Choose one" = "", "REGULAR" = getLines(webpageURL)$buslines, "OTHER" = getLines(webpageURL)$other))
