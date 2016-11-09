@@ -95,9 +95,9 @@ body <- dashboardBody(
                        selected = "10"
            ),
            actionButton("refresh", "Refresh now"),
-           p(class = "text-muted",
+           p(class = "text-muted", style="display:inline-block;",
              br(),
-             "Next update in ",  htmlOutput("countDown",inline = T), " seconds"
+             " or wait for the",strong("next update")," in ",  htmlOutput("countDown",inline = T), " seconds"
            )
        )
     ),
@@ -109,7 +109,7 @@ body <- dashboardBody(
         )
       },
       box(width = NULL, solidHeader = TRUE, footer = h6(em("Source: "), a(href=webpageURL, "Internetowy Serwis Obslugi Pasazera")),
-           leafletOutput("transportmap", height = 500)
+           leafletOutput("transportmap", height = 465)
       )
     )
   )
