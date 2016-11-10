@@ -26,7 +26,7 @@ getLines <- function(web_url) {
   special <- c("A",   "C" ,  "D" ,  "K" ,  "N")
   other <- c("102", "106", "112", "148", "150", "206", "305", "319", "325", "331", "602", "607", "609", "612")
   buslines <- c( special, allLines[!nchar(allLines) %in% c(1,2) & !allLines %in% other] )
-  tramlines <- allLines[!allLines %in% buslines]
+  tramlines <- allLines[!allLines %in% buslines & !allLines %in% other]
   # Return the output
   return(list(buslines = buslines, tramlines = tramlines, other = other))
 }
