@@ -2,7 +2,7 @@
 
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
-This repository contains the source code for an interactive app that display live location of public modes of transportation (trams and buses) for city of Wroclaw, Poland.
+This repository contains the source code for an interactive app showing live location of public modes of transportation (trams and buses) for city of Wroclaw, Poland.
 
 ## About
 The app is build using [R](http://www.r-project.org) and [Shiny](http://shiny.rstudio.com) web framework (with [shinydashboard](https://rstudio.github.io/shinydashboard/) package), utilizing [Leaflet](http://www.leafletjs.com) maps with custom tile from [Mapbox] (http://www.mapbox.com).  
